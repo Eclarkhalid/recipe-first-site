@@ -94,19 +94,31 @@ app.post('/login', async (req, res) => {
 
 
 // GET user profile using provided token
-app.get('/profile', (req, res) => {
+app.get('/profile', async (req, res) => {
   const { token } = req.cookies;
 
-  jwt.verify(token, secret, (err, info) => {
-    if (err) {
+  try {
+    const info = jwt.verify(token, secret);
+    // Continue processing with 'info'
+
+    // Example: Fetch user data from the database
+    const user = await User.findById(info.id);
+
+    // Log successful profile retrieval
+    console.log(`Profile accessed for user: ${user.username}`);
+
+    res.json(info);
+  } catch (err) {
+    console.error('Error:', err);
+
+    // Handle token verification errors and unauthorized access
+    if (err.name === 'JsonWebTokenError') {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // Continue processing with 'info'
-    // ...
-
-    res.json(info);
-  });
+    // Handle other errors
+    res.status(500).json({ message: 'An error occurred' });
+  }
 });
 
 
