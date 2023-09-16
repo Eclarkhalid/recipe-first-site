@@ -116,7 +116,7 @@ function AuthorProfilePage() {
             <div className="flex space-x-6">
               <Link to={'/write'} className={location.pathname === '/write' ? active : inactive}>
                 <button className="px-4  text-gray-700 font-medium rounded-lg  focus:outline-none focus:ring focus:ring-blue-300">
-                  Create
+                  Create Recipe
                 </button>
               </Link>
               <Link to={'/'}>

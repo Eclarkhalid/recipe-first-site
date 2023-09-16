@@ -41,7 +41,7 @@ const Login = () => {
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-semibold text-blue-900">
-            <span className="text-blue-400">Kitchen</span>Crave
+            <span className="text-blue-400">Recipe</span>Rise
           </h1>
           <h1 className="text-xl text-gray-600">Login</h1>
         </div>
