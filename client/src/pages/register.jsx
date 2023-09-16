@@ -4,34 +4,23 @@ import { Link } from 'react-router-dom';
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   async function handleRegister(ev) {
     ev.preventDefault();
-    setLoading(true);
+    const response = await fetch('https://recipe-rise-api.onrender.com/register', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-    try {
-      const response = await fetch('https://recipe-rise-api.onrender.com/register', {
-        method: 'POST',
-        body: JSON.stringify({ username, password }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (response.status === 200) {
-        alert('Registration successful. Proceed to login to access the application.');
-        window.location.href = '/login';
-      } else {
-        const data = await response.json();
-        setErrorMessage(data.message || 'Registration failed.');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-      setErrorMessage('An error occurred while registering.');
-    } finally {
-      setLoading(false);
+    if (response.status === 200) {
+      alert('Registration successful. Proceed to login to access the application.');
+      window.location.href = '/login';
+    } else {
+      alert('Registration failed.');
     }
   }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-100">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">

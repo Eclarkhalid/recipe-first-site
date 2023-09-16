@@ -62,6 +62,14 @@ mongoose.connect('mongodb+srv://eclarkhalid:machipo@cluster0.9mhktvd.mongodb.net
 
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
+  
+  // Check if the username already exists in the database
+  const existingUser = await User.findOne({ username });
+  
+  if (existingUser) {
+    return res.status(400).json({ message: 'Username already exists. Please choose a different username.' });
+  }
+
   try {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
@@ -74,11 +82,17 @@ app.post('/register', async (req, res) => {
 
     // Generate a JWT token
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-      if (err) throw err;
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error generating JWT token' });
+      }
 
       // Update the user's token field in the MongoDB document
       User.findByIdAndUpdate(userDoc._id, { token }, { new: true }, (updateErr, updatedUser) => {
-        if (updateErr) throw updateErr;
+        if (updateErr) {
+          console.error(updateErr);
+          return res.status(500).json({ message: 'Error updating user token' });
+        }
         res.cookie('token', token).json({
           id: updatedUser._id,
           username: updatedUser.username,
@@ -86,8 +100,8 @@ app.post('/register', async (req, res) => {
       });
     });
   } catch (e) {
-    console.log(e);
-    res.status(400).json(e);
+    console.error(e);
+    res.status(400).json({ message: 'Registration failed' });
   }
 });
 
@@ -95,6 +109,11 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
+
+  if (!userDoc) {
+    return res.status(400).json({ message: 'User not found' });
+  }
+
   const passOk = bcrypt.compareSync(password, userDoc.password);
 
   if (passOk) {
@@ -121,7 +140,7 @@ app.post('/login', async (req, res) => {
       });
     }
   } else {
-    res.status(400).json('wrong credentials');
+    res.status(400).json({ message: 'Wrong credentials' });
   }
 });
 

@@ -4,12 +4,12 @@ import { Link, Navigate } from 'react-router-dom';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(ev) {
     ev.preventDefault();
+
     setLoading(true);
 
     try {
@@ -23,12 +23,10 @@ const Login = () => {
       if (response.ok) {
         setRedirect(true);
       } else {
-        const data = await response.json();
-        setErrorMessage(data.message || 'Wrong credentials');
+        alert('Wrong credentials');
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setErrorMessage('An error occurred while logging in.');
     } finally {
       setLoading(false);
     }
