@@ -96,11 +96,19 @@ app.post('/login', async (req, res) => {
 // GET user profile using provided token
 app.get('/profile', (req, res) => {
   const { token } = req.cookies;
-  jwt.verify(token, secret, {}, (err, info) => {
-    if (err) throw err;
+
+  jwt.verify(token, secret, (err, info) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Continue processing with 'info'
+    // ...
+
     res.json(info);
   });
 });
+
 
 // GET user profile and posts
 app.get('/user/profile', async (req, res) => {
