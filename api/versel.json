@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "maxLambdaSize": "15mb" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "@vercel/static" 
+    },
+    {
+      "src": "(/favicon.ico|/robots.txt)",
+      "dest": "$0"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "index.html"
+    }
+  ]
+}
