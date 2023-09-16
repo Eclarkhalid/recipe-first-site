@@ -7,7 +7,7 @@ import { UserContext } from "../userContext";
 const header = () => {
   const { setUserInfo, userInfo } = useContext(UserContext);
   useEffect(() => {
-    fetch('https://recipe-rise.onrender.com/profile', {
+    fetch('http://localhost:4000/profile', {
       credentials: 'include',
     }).then(response => {
       response.json().then(userInfo => {
@@ -17,7 +17,7 @@ const header = () => {
   }, []);
 
   function logout() {
-    fetch('https://recipe-rise.onrender.com/logout', {
+    fetch('http://localhost:4000/logout', {
       credentials: 'include',
       method: 'POST',
     });
@@ -85,7 +85,7 @@ const header = () => {
               </>
             )}
           </div>
-          <div className="social-links lg:flex space-x-8 uppercase p-3">
+          <div className="social-links lg:hidden md:hidden space-x-8 uppercase p-3">
             {username && (
               <>
                 <Link className={location.pathname === '/post' ? navActive : navInactive} to={'/post'}>
