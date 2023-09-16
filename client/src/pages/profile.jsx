@@ -27,12 +27,22 @@ function AuthorProfilePage() {
   useEffect(() => {
     fetch('https://recipe-rise.onrender.com/profile', {
       credentials: 'include',
-    }).then(response => {
-      response.json().then(userInfo => {
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((userInfo) => {
         setUserInfo(userInfo);
+      })
+      .catch((error) => {
+        console.error('An error occurred:', error);
+        // Handle the error (e.g., display an error message)
       });
-    });
   }, []);
+
 
   function logout() {
     fetch('https://recipe-rise.onrender.com/logout', {
