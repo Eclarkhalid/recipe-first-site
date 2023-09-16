@@ -63,30 +63,63 @@ mongoose.connect('mongodb+srv://eclarkhalid:machipo@cluster0.9mhktvd.mongodb.net
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    // Create a new user document with the JWT token
     const userDoc = await User.create({
       username,
-      password: bcrypt.hashSync(password, salt),
+      password: hashedPassword,
+      token: '', // Initialize the token field
     });
-    res.json(userDoc);
+
+    // Generate a JWT token
+    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+      if (err) throw err;
+
+      // Update the user's token field in the MongoDB document
+      User.findByIdAndUpdate(userDoc._id, { token }, { new: true }, (updateErr, updatedUser) => {
+        if (updateErr) throw updateErr;
+        res.cookie('token', token).json({
+          id: updatedUser._id,
+          username: updatedUser.username,
+        });
+      });
+    });
   } catch (e) {
     console.log(e);
     res.status(400).json(e);
   }
 });
 
+
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
   const passOk = bcrypt.compareSync(password, userDoc.password);
+
   if (passOk) {
-    // logged in
-    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-      if (err) throw err;
-      res.cookie('token', token).json({
+    // Check if the user has a valid token
+    if (userDoc.token) {
+      // Use the existing token for login
+      res.cookie('token', userDoc.token).json({
         id: userDoc._id,
-        username,
+        username: userDoc.username,
       });
-    });
+    } else {
+      // Generate a new token and save it in the user's document
+      jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+        if (err) throw err;
+
+        // Update the user's token field in the MongoDB document
+        User.findByIdAndUpdate(userDoc._id, { token }, { new: true }, (updateErr, updatedUser) => {
+          if (updateErr) throw updateErr;
+          res.cookie('token', token).json({
+            id: updatedUser._id,
+            username: updatedUser.username,
+          });
+        });
+      });
+    }
   } else {
     res.status(400).json('wrong credentials');
   }

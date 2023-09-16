@@ -11,7 +11,7 @@ export default function FollowButton({ authorId }) {
   }, [userInfo.following, authorId]);
 
   const handleFollow = () => {
-    fetch(`http://localhost:4000/user/follow/${authorId}`, {
+    fetch(`https://recipe-rise-api.onrender.com/user/follow/${authorId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ export default function FollowButton({ authorId }) {
   };
 
   const handleUnfollow = () => {
-    fetch(`http://localhost:4000/user/unfollow/${authorId}`, {
+    fetch(`https://recipe-rise-api.onrender.com/user/unfollow/${authorId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

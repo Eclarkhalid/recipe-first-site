@@ -5,7 +5,7 @@ const cooking = () => {
   const [cookingTipsPosts, setCookingTipsPosts] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:4000/post?category=Cooking%20Tips') // Update the URL based on your backend API
+    fetch('https://recipe-rise-api.onrender.com/post?category=Cooking%20Tips') // Update the URL based on your backend API
       .then(response => response.json())
       .then(posts => {
         setCookingTipsPosts(posts);

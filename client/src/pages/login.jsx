@@ -4,16 +4,16 @@ import { Link, Navigate } from 'react-router-dom';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [redirect, setRedirect] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [redirect, setRedirect] = useState(false);
 
   async function handleLogin(ev) {
     ev.preventDefault();
-
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/login', {
+      const response = await fetch('https://recipe-rise-api.onrender.com/login', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
         headers: { 'Content-Type': 'application/json' },
@@ -23,10 +23,12 @@ const Login = () => {
       if (response.ok) {
         setRedirect(true);
       } else {
-        alert('Wrong credentials');
+        const data = await response.json();
+        setErrorMessage(data.message || 'Wrong credentials');
       }
     } catch (error) {
       console.error('An error occurred:', error);
+      setErrorMessage('An error occurred while logging in.');
     } finally {
       setLoading(false);
     }

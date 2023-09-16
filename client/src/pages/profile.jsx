@@ -28,7 +28,7 @@ function AuthorProfilePage() {
 
   const { setUserInfo, userInfo } = useContext(UserContext);
   useEffect(() => {
-    axios.get('http://localhost:4000/profile', { withCredentials: true })
+    axios.get('https://recipe-rise-api.onrender.com/profile', { withCredentials: true })
       .then(response => {
         setUserInfo(response.data);
       })
@@ -38,7 +38,7 @@ function AuthorProfilePage() {
   }, []);
 
   function logout() {
-    fetch('http://localhost:4000/logout', {
+    fetch('https://recipe-rise-api.onrender.com/logout', {
       credentials: 'include',
       method: 'POST',
     });
@@ -47,7 +47,7 @@ function AuthorProfilePage() {
 
 
   const handleNameChange = () => {
-    fetch('http://localhost:4000/user/profile', {
+    fetch('https://recipe-rise-api.onrender.com/user/profile', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ function AuthorProfilePage() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:4000/user/profile', {
+    fetch('https://recipe-rise-api.onrender.com/user/profile', {
       credentials: 'include',
     })
       .then((response) => response.json())
@@ -85,7 +85,7 @@ function AuthorProfilePage() {
 
   // FETCH FOLLOWERS
   useEffect(() => {
-    fetch('http://localhost:4000/user/profile', {
+    fetch('https://recipe-rise-api.onrender.com/user/profile', {
       credentials: 'include',
     })
       .then((response) => response.json())
