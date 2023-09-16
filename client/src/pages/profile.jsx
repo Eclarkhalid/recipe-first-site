@@ -1,6 +1,9 @@
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { UserContext } from "../userContext";
+
+import axios from 'axios';
+
 function truncateSummary(summary) {
   const words = summary.split(' ');
   if (words.length > 2) {
@@ -25,24 +28,14 @@ function AuthorProfilePage() {
 
   const { setUserInfo, userInfo } = useContext(UserContext);
   useEffect(() => {
-    fetch('https://recipe-rise.onrender.com/profile', {
-      credentials: 'include',
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+    axios.get('https://recipe-rise.onrender.com/profile', { withCredentials: true })
+      .then(response => {
+        setUserInfo(response.data);
       })
-      .then((userInfo) => {
-        setUserInfo(userInfo);
-      })
-      .catch((error) => {
-        console.error('An error occurred:', error);
-        // Handle the error (e.g., display an error message)
+      .catch(error => {
+        console.error('Error:', error);
       });
   }, []);
-
 
   function logout() {
     fetch('https://recipe-rise.onrender.com/logout', {
