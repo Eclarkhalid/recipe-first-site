@@ -11,7 +11,7 @@ export default function FollowButton({ authorId }) {
   }, [userInfo.following, authorId]);
 
   const handleFollow = () => {
-    fetch(`http://localhost:4000/user/follow/${authorId}`, {
+    fetch(`https://recipe-rise.onrender.com/user/follow/${authorId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ export default function FollowButton({ authorId }) {
   };
 
   const handleUnfollow = () => {
-    fetch(`http://localhost:4000/user/unfollow/${authorId}`, {
+    fetch(`https://recipe-rise.onrender.com/user/unfollow/${authorId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,9 +61,8 @@ export default function FollowButton({ authorId }) {
       {userInfo.id !== authorId && (
         <button
           onClick={isFollowing ? handleUnfollow : handleFollow}
-          className={`${
-            isFollowing ? "bg-red-500 text-white" : "bg-blue-500 text-white"
-          } px-2 py-1 rounded-md mt-2`}
+          className={`${isFollowing ? "bg-red-500 text-white" : "bg-blue-500 text-white"
+            } px-2 py-1 rounded-md mt-2`}
         >
           {isFollowing ? "Unfollow" : "Follow"}
         </button>

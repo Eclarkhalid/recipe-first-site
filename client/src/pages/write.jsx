@@ -21,7 +21,7 @@ const Write = () => {
     data.set('file', files[0]);
     data.set('categories', category);
     ev.preventDefault();
-    const response = await fetch('http://localhost:4000/post', {
+    const response = await fetch('https://recipe-rise.onrender.com/post', {
       method: 'POST',
       body: data,
       credentials: 'include',
@@ -37,11 +37,11 @@ const Write = () => {
   }
 
   return <>
-      {isLoading && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="text-white text-2xl">Creating post...</div>
-        </div>
-      )};
+    {isLoading && (
+      <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+        <div className="text-white text-2xl">Creating post...</div>
+      </div>
+    )};
 
 
     <section className="write p-5">

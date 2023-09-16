@@ -10,7 +10,7 @@ export default function PostPage() {
   const [selectedAuthor, setSelectedAuthor] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:4000/post")
+    fetch("https://recipe-rise.onrender.com/post")
       .then((response) => response.json())
       .then((data) => {
         setPosts(data);
@@ -47,8 +47,8 @@ export default function PostPage() {
     return acc;
   }, {});
 
- 
-  
+
+
 
   return (
     <div className="p-4 md:p-8 lg:p-12">
