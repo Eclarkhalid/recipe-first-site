@@ -21,6 +21,8 @@ import Profile from './pages/profile'
 import Cooking from "./pages/cooking";
 import { UserContextProvider } from "./userContext";
 
+import ProtectedRoute from "./ProtectedRoute";
+
 const Layout = () => {
   return <>
   <Header />
@@ -70,6 +72,10 @@ const router = createBrowserRouter([
         path: "/profile",
         element: <Profile />,
       },
+      {
+        path: "/profile",
+        element: <ProtectedRoute element={<Profile />} />, // Use ProtectedRoute for /profile
+      },
     ]
   },
   {
@@ -83,16 +89,15 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-
-  return <>
+  return (
     <UserContextProvider>
-    <div className="app">
-      <div className="container-xl">
-        <RouterProvider router={router} />
+      <div className="app">
+        <div className="container-xl">
+          <RouterProvider router={router} />
+        </div>
       </div>
-    </div>
     </UserContextProvider>
-  </>
+  );
 }
 
-export default App
+export default App;

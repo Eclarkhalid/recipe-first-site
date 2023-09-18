@@ -1,9 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const app = express();
-const User = require('./models/user');
-const Post = require('./models/post');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -11,11 +8,20 @@ const multer = require('multer');
 const { v2: cloudinary } = require('cloudinary');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
+const app = express();
+
+// Generate a JWT secret dynamically (you can replace this with your own secure method)
+const generateJWTSecret = () => {
+  return require('crypto').randomBytes(32).toString('hex');
+};
+
+const jwtSecret = generateJWTSecret();
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: 'recipe-rise',
   api_key: '887651317989421',
-  api_secret: 'jDEuiOVC7eclQ5rmfA8LmEc4zwo'
+  api_secret: 'jDEuiOVC7eclQ5rmfA8LmEc4zwo',
 });
 
 const storage = new CloudinaryStorage({
@@ -28,11 +34,6 @@ const storage = new CloudinaryStorage({
 
 const uploadMiddleware = multer({ storage });
 
-const fsPromises = require('fs').promises; // Import fs.promises
-
-const salt = bcrypt.genSaltSync(10);
-const secret = 'asdfe45we45w345wegw345werjktjwertkj';
-
 app.use(cors({ credentials: true, origin: 'https://recipe-first-site.vercel.app' }));
 
 const corsOptions = {
@@ -41,54 +42,94 @@ const corsOptions = {
 };
 
 app.options('*', cors(corsOptions));
-
-
-app.use((err, req, res, next) => {
-  if (err.name === 'CorsError') {
-    res.status(403).json({ message: 'CORS error' });
-  } else {
-    next(err);
-  }
-});
-
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
 mongoose.connect('mongodb+srv://eclarkhalid:machipo@cluster0.9mhktvd.mongodb.net/?retryWrites=true&w=majority');
 
+// Define a MongoDB User schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  token: String, // Store the JWT token in the user document
+});
+
+const User = mongoose.model('User', userSchema);
+
 // Rest of your code...
 
-
+// Register a new user
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const userDoc = await User.create({
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const token = jwt.sign({ username }, jwtSecret);
+    
+    // Save the user document in MongoDB with the token
+    const user = new User({
       username,
-      password: bcrypt.hashSync(password, salt),
+      password: hashedPassword,
+      token,
     });
-    res.json(userDoc);
+
+    await user.save();
+
+    // Set the JWT token in a cookie
+    res.cookie('token', token, { httpOnly: true });
+
+    res.json({ message: 'User registered successfully', token });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(400).json(e);
   }
 });
 
+// Login route
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const userDoc = await User.findOne({ username });
-  const passOk = bcrypt.compareSync(password, userDoc.password);
-  if (passOk) {
-    // logged in
-    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-      if (err) throw err;
-      res.cookie('token', token).json({
-        id: userDoc._id,
-        username,
-      });
-    });
-  } else {
-    res.status(400).json('wrong credentials');
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    return res.status(401).json({ message: 'Authentication failed' });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+
+  if (!validPassword) {
+    return res.status(401).json({ message: 'Authentication failed' });
+  }
+
+  // If authentication is successful, generate a new token and save it in the database
+  const token = jwt.sign({ username }, jwtSecret);
+  user.token = token;
+  await user.save();
+
+  // Set the JWT token in a cookie
+  res.cookie('token', token, { httpOnly: true });
+
+  res.json({ message: 'Login successful', token });
+});
+
+// Protected route that requires authentication
+app.get('/protected', async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    const user = await User.findOne({ username: decoded.username });
+
+    if (!user || user.token !== token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    res.json({ message: 'Welcome to the protected route, ' + decoded.username });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'An error occurred' });
   }
 });
 
