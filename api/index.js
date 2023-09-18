@@ -62,85 +62,33 @@ mongoose.connect('mongodb+srv://eclarkhalid:machipo@cluster0.9mhktvd.mongodb.net
 
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
-  
-  // Check if the username already exists in the database
-  const existingUser = await User.findOne({ username });
-  
-  if (existingUser) {
-    return res.status(400).json({ message: 'Username already exists. Please choose a different username.' });
-  }
-
   try {
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
-    // Create a new user document with the JWT token
     const userDoc = await User.create({
       username,
-      password: hashedPassword,
-      token: '', // Initialize the token field
+      password: bcrypt.hashSync(password, salt),
     });
-
-    // Generate a JWT token
-    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Error generating JWT token' });
-      }
-
-      // Update the user's token field in the MongoDB document
-      User.findByIdAndUpdate(userDoc._id, { token }, { new: true }, (updateErr, updatedUser) => {
-        if (updateErr) {
-          console.error(updateErr);
-          return res.status(500).json({ message: 'Error updating user token' });
-        }
-        res.cookie('token', token).json({
-          id: updatedUser._id,
-          username: updatedUser.username,
-        });
-      });
-    });
+    res.json(userDoc);
   } catch (e) {
-    console.error(e);
-    res.status(400).json({ message: 'Registration failed' });
+    console.log(e);
+    res.status(400).json(e);
   }
 });
-
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
-
-  if (!userDoc) {
-    return res.status(400).json({ message: 'User not found' });
-  }
-
   const passOk = bcrypt.compareSync(password, userDoc.password);
-
   if (passOk) {
-    // Check if the user has a valid token
-    if (userDoc.token) {
-      // Use the existing token for login
-      res.cookie('token', userDoc.token).json({
+    // logged in
+    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+      if (err) throw err;
+      res.cookie('token', token).json({
         id: userDoc._id,
-        username: userDoc.username,
+        username,
       });
-    } else {
-      // Generate a new token and save it in the user's document
-      jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-        if (err) throw err;
-
-        // Update the user's token field in the MongoDB document
-        User.findByIdAndUpdate(userDoc._id, { token }, { new: true }, (updateErr, updatedUser) => {
-          if (updateErr) throw updateErr;
-          res.cookie('token', token).json({
-            id: updatedUser._id,
-            username: updatedUser.username,
-          });
-        });
-      });
-    }
+    });
   } else {
-    res.status(400).json({ message: 'Wrong credentials' });
+    res.status(400).json('wrong credentials');
   }
 });
 
