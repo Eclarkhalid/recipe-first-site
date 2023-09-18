@@ -33,11 +33,11 @@ const fsPromises = require('fs').promises; // Import fs.promises
 const salt = bcrypt.genSaltSync(10);
 const secret = 'asdfe45we45w345wegw345werjktjwertkj';
 
-app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+app.use(cors({ credentials: true, origin: 'https://recipe-first-site.vercel.app' }));
 
 const corsOptions = {
   credentials: true,
-  origin: 'http://localhost:5173',
+  origin: 'https://recipe-first-site.vercel.app',
 };
 
 app.options('*', cors(corsOptions));
