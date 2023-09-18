@@ -139,7 +139,8 @@ app.get('/profile', async (req, res) => {
   const { token } = req.cookies;
 
   try {
-    const info = jwt.verify(token, secret);
+    const info = jwt.verify(token, jwtSecret);
+
     // Continue processing with 'info'
 
     // Example: Fetch user data from the database
@@ -166,7 +167,7 @@ app.get('/profile', async (req, res) => {
 // GET user profile and posts
 app.get('/user/profile', async (req, res) => {
   const { token } = req.cookies;
-  jwt.verify(token, secret, {}, async (err, info) => {
+  jwt.verify(token, jwtSecret, {}, async (err, info) => {
     if (err) throw err;
 
     try {
@@ -183,7 +184,7 @@ app.get('/user/profile', async (req, res) => {
 // PUT user profile update
 app.put('/user/profile', async (req, res) => {
   const { token } = req.cookies;
-  jwt.verify(token, secret, {}, async (err, info) => {
+  jwt.verify(token, jwtSecret, {}, async (err, info) => {
     if (err) throw err;
 
     try {
@@ -205,7 +206,8 @@ app.put('/user/profile-info', uploadMiddleware.single('profilePicture'), async (
   try {
     // Verify the token and retrieve user info
     const { token } = req.cookies;
-    const info = jwt.verify(token, secret); // Verify without options
+    const info = jwt.verify(token, jwtSecret);
+// Verify without options
 
     const { description } = req.body;
 
@@ -242,7 +244,8 @@ app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
   try {
     // Verify the token and retrieve user info
     const { token } = req.cookies;
-    const info = jwt.verify(token, secret); // Verify without options
+    const info = jwt.verify(token, jwtSecret);
+ // Verify without options
     const { title, summary, content } = req.body;
 
     // Set the target file size to 2.5MB (adjust as needed)
@@ -287,7 +290,8 @@ app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
   try {
     // Verify the token and retrieve user info
     const { token } = req.cookies;
-    const info = jwt.verify(token, secret); // Verify without options
+    const info = jwt.verify(token, jwtSecret);
+ // Verify without options
     const { id, title, summary, content } = req.body;
 
     // Find the post document and check if the user is the author
