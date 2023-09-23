@@ -107,27 +107,27 @@ function AuthorProfilePage() {
   return <>
     <div className='items-center justify-center min-h-screen p-3'>
       <div className=" px-8">
-        <div className="w-full flex flex-col lg:flex-row justify-between items-center">
-          <div className="bg-white p-6 rounded-lg shadow-md mb-4 lg:mb-0 lg:flex lg:items-center">
-            <h1 className='text-2xl font-semibold mb-4 lg:mb-0 lg:mr-4'>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 inline-block align-middle mr-2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 3H7a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 17l5-5-5-5m0 10V7" />
+        <div className="w-full flex flex-col lg:flex-row justify-between items-center bg-white p-6 rounded-lg shadow">
+          <div className=" mb-4 lg:mb-0 lg:flex lg:items-center">
+            <h1 className='flex gap-1 items-center text-2xl font-semibold mb-4 lg:mb-0 lg:mr-4'>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
+
               Dashboard
             </h1>
-            <div className="flex space-x-6">
-              <Link to={'/write'} className={location.pathname === '/write' ? active : inactive}>
-                <button className="px-4  text-gray-700 font-medium rounded-lg  focus:outline-none focus:ring focus:ring-blue-300">
-                  Create Recipe
-                </button>
-              </Link>
-              <Link to={'/'}>
-                <button onClick={logout} className='px-4 py-2 text-md text-gray-600 bg-gray-300 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300'>
-                  Logout
-                </button>
-              </Link>
-            </div>
+          </div>
+          <div className="flex space-x-6">
+            <Link to={'/write'} className={location.pathname === '/write' ? active : inactive}>
+              <button className="px-4  text-gray-700 font-medium rounded-lg  focus:outline-none focus:ring focus:ring-blue-300">
+                Create Recipe
+              </button>
+            </Link>
+            <Link to={'/'}>
+              <button onClick={logout} className='px-4 py-2 text-md text-gray-600 bg-gray-300 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300'>
+                Logout
+              </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -153,11 +153,11 @@ function AuthorProfilePage() {
           </div>
         )}
 
-        <h1 className='py-3 text-xl lg:text-2xl font-semibold'>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 inline-block align-middle mr-2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 3H7a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10 17l5-5-5-5m0 10V7" />
+        <h1 className='flex gap-1 items-center py-3 text-xl lg:text-2xl font-semibold'>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
           </svg>
+
           Your Posts
         </h1>
 

@@ -3,7 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Navigate, useParams } from "react-router-dom";
 
-export default function editPost() {
+export default function EditPost() {
   const { id } = useParams();
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
@@ -13,18 +13,22 @@ export default function editPost() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     fetch('https://recipe-rise-api.onrender.com/post/' + id)
       .then(response => {
         response.json().then(postInfo => {
           setTitle(postInfo.title);
           setContent(postInfo.content);
           setSummary(postInfo.summary);
+          setIsLoading(false);
         });
       });
   }, []);
 
   async function updatePost(ev) {
     ev.preventDefault();
+    setIsLoading(true);
+
     const data = new FormData();
     data.set('title', title);
     data.set('summary', summary);
@@ -33,14 +37,21 @@ export default function editPost() {
     if (files?.[0]) {
       data.set('file', files?.[0]);
     }
-    const response = await fetch('https://recipe-rise-api.onrender.com/post', {
-      method: 'PUT',
-      body: data,
-      credentials: 'include',
-    });
-    if (response.ok) {
+
+    try {
+      const response = await fetch('https://recipe-rise-api.onrender.com/post', {
+        method: 'PUT',
+        body: data,
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        setRedirect(true);
+      }
+    } catch (error) {
+      console.error('Error updating post:', error);
+    } finally {
       setIsLoading(false);
-      setRedirect(true);
     }
   }
 
@@ -49,12 +60,11 @@ export default function editPost() {
   }
 
   return <>
-
     {isLoading && (
       <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
         <div className="text-white text-2xl">Updating post...</div>
       </div>
-    )};
+    )}
 
     <section className="write p-5">
       <div className="container-xl">
@@ -91,8 +101,12 @@ export default function editPost() {
                 </div>
 
                 <div className="flex  my-3">
-                  <button className="p-2 bg-green-300 rounded hover:bg-green-500 duration-75">
-                    Update Post
+                  <button
+                    type="submit"
+                    className="p-2 bg-green-300 rounded hover:bg-green-500 duration-75"
+                    disabled={isLoading} // Disable the button when isLoading is true
+                  >
+                    {isLoading ? 'Updating...' : 'Update Post'}
                   </button>
                 </div>
               </div>
